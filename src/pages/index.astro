@@ -1,0 +1,54 @@
+---
+import type { Service, BeforeAfter, CompanySettings } from "../types";
+import { sanityClient } from "sanity:client";
+import { COMPANY_SETTINGS_QUERY, SERVICES_QUERY, BEFORE_AFTER_QUERY } from "../lib/queries";
+import Layout from "../layouts/Layout.astro";
+import HeroSection from "../sections/HeroSection.astro";
+import PromiseGrid from "../sections/PromiseGrid.astro";
+import ServiceList from "../components/ServiceList.astro";
+import ProcessSteps from "../sections/ProcessSteps.astro";
+import WorkSlider from "../components/WorkSlider.astro";
+import ServiceArea from "../sections/ServiceArea.astro";
+import FAQSection from "../sections/FAQSection.astro";
+import CTABanner from "../sections/CTABanner.astro";
+
+let companySettings: CompanySettings | null = null;
+let services: Service[] = [];
+let beforeAfterItems: BeforeAfter[] = [];
+
+try {
+  companySettings = await sanityClient.fetch(COMPANY_SETTINGS_QUERY);
+  services = await sanityClient.fetch(SERVICES_QUERY);
+  beforeAfterItems = await sanityClient.fetch(BEFORE_AFTER_QUERY);
+} catch (e) {
+  console.warn("Sanity fetch failed — is your project configured?", (e as Error).message);
+}
+---
+
+<Layout
+  title="Home"
+  description="Licensed general contracting and home services — fast, fair, and guaranteed."
+  companySettings={companySettings}
+>
+  <HeroSection
+    businessName={companySettings?.businessName}
+    phone={companySettings?.phone}
+  />
+
+  <PromiseGrid />
+
+  {services.length > 0 && <ServiceList services={services} />}
+
+  <ProcessSteps />
+
+  {beforeAfterItems.length > 0 && <WorkSlider items={beforeAfterItems} />}
+
+  <ServiceArea
+    areas={companySettings?.serviceAreas}
+    phone={companySettings?.phone}
+  />
+
+  <FAQSection />
+
+  <CTABanner phone={companySettings?.phone} />
+</Layout>

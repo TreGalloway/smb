@@ -1,0 +1,45 @@
+---
+export interface Props {
+  businessName?: string;
+  phone?: string;
+}
+
+const { businessName = "Professionals", phone } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-gray-50 pt-24 pb-20 sm:pt-32 sm:pb-28">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="lg:mx-auto lg:max-w-3xl lg:text-center">
+      <p class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">
+        Licensed & insured — serving your community
+      </p>
+      <h1 class="mt-4 text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
+        Quality work.<br />
+        <span class="text-royal-800">Guaranteed.</span>
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-gray-500 lg:mx-auto">
+        From emergency repairs to full remodels, our licensed team delivers professional craftsmanship
+        backed by a written guarantee. Fast, fair, and done right the first time.
+      </p>
+      <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        {phone && (
+          <a
+            href={`tel:${phone.replace(/\s/g, "")}`}
+            class="inline-flex items-center gap-2 rounded-lg bg-royal-800 px-6 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-royal-700 transition-colors"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+            </svg>
+            Call {phone}
+          </a>
+        )}
+        <a
+          href="#contact"
+          class="inline-flex items-center gap-2 rounded-lg border-2 border-royal-800 px-6 py-3.5 text-sm font-semibold text-royal-800 hover:bg-royal-800 hover:text-white transition-colors"
+        >
+          Get a free quote
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+---
+export interface Props {
+  areas?: string[];
+  phone?: string;
+}
+
+const { areas, phone } = Astro.props;
+const defaultAreas = areas ?? ["Your City", "Neighboring Town", "County Area"];
+---
+
+<section class="bg-white py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:text-center">
+      <p class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">Service area</p>
+      <h2 class="mt-3 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+        Proudly serving your community.
+      </h2>
+      <p class="mt-4 text-lg text-gray-500">
+        If you're in one of these communities, we can usually be there same-day. Not listed? Call us.
+      </p>
+    </div>
+    <ul class="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {defaultAreas.map((area) => (
+        <li class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-700">
+          {area}
+        </li>
+      ))}
+    </ul>
+    {phone && (
+      <div class="mt-10 text-center">
+        <a
+          href={`tel:${phone.replace(/\s/g, "")}`}
+          class="inline-flex items-center gap-2 text-sm font-semibold text-royal-800 hover:text-royal-700 underline"
+        >
+          Check availability · {phone}
+        </a>
+      </div>
+    )}
+  </div>
+</section>

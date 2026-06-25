@@ -1,0 +1,100 @@
+---
+import "../styles/global.css";
+import type { CompanySettings } from "../types";
+import type { WithContext, HomeAndConstructionBusiness } from "schema-dts";
+import FooterContact from "../components/FooterContact.astro";
+
+export interface Props {
+  title: string;
+  description?: string;
+  companySettings: CompanySettings | null;
+}
+
+const { title, description, companySettings } = Astro.props;
+
+const siteDescription = description ?? "Professional general contracting and home services you can trust.";
+
+let ldJson = "";
+if (companySettings) {
+  const structured: WithContext<HomeAndConstructionBusiness> = {
+    "@context": "https://schema.org",
+    "@type": "HomeAndConstructionBusiness",
+    name: companySettings.businessName,
+    telephone: companySettings.phone,
+    email: companySettings.email ?? undefined,
+    address: companySettings.address
+      ? {
+          "@type": "PostalAddress",
+          streetAddress: companySettings.address,
+        }
+      : undefined,
+    areaServed: companySettings.serviceAreas ?? undefined,
+    hasCertification: companySettings.licenseNumbers ?? undefined,
+    description: siteDescription,
+  };
+  ldJson = JSON.stringify(structured);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={siteDescription} />
+    <meta name="format-detection" content="telephone=yes" />
+    <title>{title} | {companySettings?.businessName ?? "SMB"}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    {ldJson && (
+      <script type="application/ld+json" set:html={ldJson} />
+    )}
+  </head>
+  <body>
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+      <div class="mx-auto max-w-7xl flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <a href="/" class="text-xl font-extrabold tracking-tight text-royal-800 no-underline">
+          {companySettings?.businessName ?? "SMB"}
+        </a>
+        <div class="flex items-center gap-4">
+          <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
+            <a href="/" class="hover:text-royal-700 transition-colors no-underline">Home</a>
+            <a href="#services" class="hover:text-royal-700 transition-colors no-underline">Services</a>
+            <a href="/portfolio" class="hover:text-royal-700 transition-colors no-underline">Our Work</a>
+            <a href="#contact" class="hover:text-royal-700 transition-colors no-underline">Contact</a>
+          </nav>
+          {companySettings?.phone && (
+            <a
+              href={`tel:${companySettings.phone.replace(/\s/g, "")}`}
+              class="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-royal-800 px-4 py-2 text-sm font-semibold text-white no-underline hover:bg-royal-700 transition-colors"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+              </svg>
+              {companySettings.phone}
+            </a>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer id="contact">
+      <FooterContact companySettings={companySettings} />
+    </footer>
+  </body>
+</html>
+
+<style>
+  /* Prevent layout shift from the sticky header */
+  html {
+    scroll-padding-top: 72px;
+  }
+</style>

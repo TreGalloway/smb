@@ -1,0 +1,153 @@
+---
+import type { BeforeAfter } from "../types";
+import { urlFor } from "../lib/sanity";
+
+export interface Props {
+  items: BeforeAfter[];
+}
+
+const { items } = Astro.props;
+---
+
+<section id="work" class="bg-gray-50 py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">Real jobs</h2>
+    <p class="mt-3 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+      See the difference.
+    </p>
+    <p class="mt-4 max-w-2xl text-lg text-gray-500">
+      Drag the slider on a few recent jobs from around our service area.
+    </p>
+
+    <div class="mt-12">
+      {
+        items.map((item) => {
+          const beforeUrl = item.beforeImage
+            ? urlFor(item.beforeImage).width(900).height(600).fit("crop").url()
+            : "";
+          const afterUrl = item.afterImage
+            ? urlFor(item.afterImage).width(900).height(600).fit("crop").url()
+            : "";
+          return (
+            <div class="slider-item mb-10 last:mb-0" data-slider>
+              <figure class="relative mx-auto max-w-4xl select-none overflow-hidden rounded-2xl bg-gray-200 shadow-lg">
+                <div class="aspect-[3/2] w-full">
+                  <img
+                    class="absolute inset-0 h-full w-full object-cover"
+                    src={afterUrl}
+                    alt={item.afterImage?.alt ?? "After"}
+                    loading="lazy"
+                  />
+                  <div
+                    class="before-clip absolute inset-0 h-full w-full"
+                    style="clip-path: inset(0 50% 0 0)"
+                  >
+                    <img
+                      class="absolute inset-0 h-full w-full object-cover"
+                      src={beforeUrl}
+                      alt={item.beforeImage?.alt ?? "Before"}
+                      loading="lazy"
+                    />
+                  </div>
+                  <div
+                    class="slider-handle absolute top-0 bottom-0 z-10"
+                    style="left: calc(50% - 24px)"
+                  >
+                    <div class="relative flex h-full items-center">
+                      <div class="h-full w-0.5 bg-gold-500 shadow-lg" />
+                      <button
+                        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-12 w-12 cursor-ew-resize items-center justify-center rounded-full border-2 border-gold-500 bg-white shadow-xl transition-transform active:scale-110"
+                        aria-label="Drag to compare before and after"
+                      >
+                        <svg class="h-5 w-5 text-gold-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <figcaption class="flex items-center justify-between bg-white px-6 py-4">
+                  <span class="flex items-center gap-4 text-sm">
+                    <span class="flex items-center gap-1.5">
+                      <span class="h-2.5 w-2.5 rounded-full bg-gold-500" />
+                      <span class="font-medium text-gray-900">Before</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                      <span class="h-2.5 w-2.5 rounded-full bg-royal-800" />
+                      <span class="font-medium text-gray-900">After</span>
+                    </span>
+                  </span>
+                  <span class="text-sm font-medium text-gray-700">{item.title}</span>
+                </figcaption>
+              </figure>
+              {item.description && (
+                <p class="mx-auto mt-3 max-w-4xl text-sm text-gray-500">{item.description}</p>
+              )}
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const sliders = document.querySelectorAll<HTMLElement>("[data-slider]");
+
+  sliders.forEach((slider) => {
+    const container = slider.querySelector<HTMLElement>("[class*='aspect-']");
+    const beforeClip = slider.querySelector<HTMLElement>("[class*='before-clip']");
+    const handle = slider.querySelector<HTMLElement>("[class*='slider-handle']");
+    const button = handle?.querySelector("button");
+    if (!container || !beforeClip || !handle || !button) return;
+
+    let isDragging = false;
+
+    function setPosition(x: number) {
+      const rect = container.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+      beforeClip.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      handle.style.left = `calc(${pct}% - 24px)`;
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      isDragging = true;
+      button.setPointerCapture(e.pointerId);
+      container.style.cursor = "ew-resize";
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!isDragging) return;
+      e.preventDefault();
+      setPosition(e.clientX);
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+      container.style.cursor = "";
+    }
+
+    button.addEventListener("pointerdown", onPointerDown);
+    button.addEventListener("pointermove", onPointerMove);
+    button.addEventListener("pointerup", onPointerUp);
+    button.addEventListener("pointercancel", onPointerUp);
+
+    container.addEventListener("mousemove", (e) => {
+      if ((e.target as HTMLElement).closest("button")) return;
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      handle.style.left = `calc(${(x / rect.width) * 100}% - 24px)`;
+    });
+
+    container.addEventListener("mouseleave", () => {
+      if (!isDragging) {
+        handle.style.left = "calc(50% - 24px)";
+      }
+    });
+
+    container.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("button")) return;
+      setPosition(e.clientX);
+    });
+  });
+</script>

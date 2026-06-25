@@ -1,0 +1,44 @@
+---
+const promises = [
+  {
+    number: "01",
+    title: "No surprise invoices",
+    text: "You approve a flat price before any work starts. The number we quote is the number you pay.",
+  },
+  {
+    number: "02",
+    title: "We show up on time",
+    text: "We text you when we're en route. Miss your window and your call-out fee is on us.",
+  },
+  {
+    number: "03",
+    title: "We leave it cleaner",
+    text: "Boot covers, drop cloths, and a full clean-up. You'd never know we were there — except the job is done.",
+  },
+  {
+    number: "04",
+    title: "Guaranteed work",
+    text: "Every repair is backed by our written workmanship guarantee. If it's not right, we make it right.",
+  },
+];
+---
+
+<section class="bg-white py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:text-center">
+      <p class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">Our promise</p>
+      <h2 class="mt-3 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+        Why neighbors call us first.
+      </h2>
+    </div>
+    <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {promises.map((item) => (
+        <div class="relative border-t border-gold-500 pt-6">
+          <span class="text-3xl font-extrabold tracking-tight text-gold-500">{item.number}</span>
+          <h3 class="mt-4 text-lg font-bold text-gray-900">{item.title}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-gray-500">{item.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

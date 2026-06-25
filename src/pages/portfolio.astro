@@ -1,0 +1,47 @@
+---
+import type { BeforeAfter, CompanySettings } from "../types";
+import { sanityClient } from "sanity:client";
+import { BEFORE_AFTER_QUERY, COMPANY_SETTINGS_QUERY } from "../lib/queries";
+import Layout from "../layouts/Layout.astro";
+import WorkSlider from "../components/WorkSlider.astro";
+
+let companySettings: CompanySettings | null = null;
+let beforeAfterItems: BeforeAfter[] = [];
+
+try {
+  companySettings = await sanityClient.fetch(COMPANY_SETTINGS_QUERY);
+  beforeAfterItems = await sanityClient.fetch(BEFORE_AFTER_QUERY);
+} catch (e) {
+  console.warn("Sanity fetch failed — is your project configured?", (e as Error).message);
+}
+---
+
+<Layout
+  title="Portfolio"
+  description="Browse our gallery of before-and-after transformations from recent projects."
+  companySettings={companySettings}
+>
+  <section class="bg-gray-50 py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <p class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">Our work</p>
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+          See the difference.
+        </h1>
+        <p class="mt-4 text-lg text-gray-500">
+          Drag the slider on each project to see the transformation for yourself.
+        </p>
+      </div>
+
+      <div class="mt-16">
+        {beforeAfterItems.length > 0 ? (
+          <WorkSlider items={beforeAfterItems} />
+        ) : (
+          <p class="text-center text-sm text-gray-400">
+            No portfolio items yet. Check back soon.
+          </p>
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>
