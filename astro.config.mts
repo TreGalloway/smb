@@ -11,7 +11,7 @@ const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = loadEnv(
 );
 
 export default defineConfig({
-  site: "https://www.smb.com",
+  site: process.env.SITE_URL ?? "http://localhost:4321",
   integrations: [
     sanity({
       projectId: PUBLIC_SANITY_PROJECT_ID ?? "your-project-id",
