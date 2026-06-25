@@ -1,0 +1,163 @@
+---
+import type { Service, BeforeAfter, CompanySettings } from "../types";
+import { sanityClient } from "sanity:client";
+import { COMPANY_SETTINGS_QUERY, SERVICES_QUERY, BEFORE_AFTER_QUERY } from "../lib/queries";
+import Layout from "../layouts/Layout.astro";
+import BeforeAfterSlider from "../components/BeforeAfterSlider.astro";
+
+let companySettings: CompanySettings | null = null;
+let services: Service[] = [];
+let beforeAfterItems: BeforeAfter[] = [];
+
+try {
+  companySettings = await sanityClient.fetch(COMPANY_SETTINGS_QUERY);
+  services = await sanityClient.fetch(SERVICES_QUERY);
+  beforeAfterItems = await sanityClient.fetch(BEFORE_AFTER_QUERY);
+} catch (e) {
+  console.warn("Sanity fetch failed — is your project configured?", (e as Error).message);
+}
+
+const groupedByService: Record<string, BeforeAfter[]> = {};
+for (const item of beforeAfterItems) {
+  const slug = item.service?.slug ?? "__uncategorized__";
+  if (!groupedByService[slug]) groupedByService[slug] = [];
+  groupedByService[slug].push(item);
+}
+---
+
+<Layout
+  title="Services"
+  description="Explore our full range of home services — from painting and plumbing to carpentry and more."
+  companySettings={companySettings}
+>
+  <section class="bg-white py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <p class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">What we do</p>
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+          Every job, big or small — handled.
+        </h1>
+        <p class="mt-4 text-lg text-gray-500">
+          Browse our services below and see real before-and-after results from our work.
+        </p>
+      </div>
+
+      <div class="mt-16 space-y-20">
+        {services.length > 0 ? (
+          services.map((service) => {
+            const photos = groupedByService[service.slug] ?? [];
+            return (
+              <div class="scroll-mt-24" id={`service-${service.slug}`}>
+                <div class="mx-auto max-w-3xl">
+                  <span class="text-4xl font-extrabold tracking-tight text-gray-300">
+                    {String(service.sequenceNumber).padStart(2, "0")}
+                  </span>
+                  <h2 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    {service.title}
+                  </h2>
+                  {service.description && (
+                    <p class="mt-4 text-lg text-gray-500 leading-relaxed">{service.description}</p>
+                  )}
+                  {service.bulletPoints && service.bulletPoints.length > 0 && (
+                    <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                      {service.bulletPoints.filter(Boolean).map((point) => (
+                        <li class="flex items-center gap-1.5 text-sm text-gray-400">
+                          <svg class="h-3.5 w-3.5 flex-shrink-0 text-gold-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                          </svg>
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div class="mt-10">
+                  {photos.length > 0 ? (
+                    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+                      {photos.map((item) => (
+                        <BeforeAfterSlider item={item} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div class="rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 py-16 text-center">
+                      <svg class="mx-auto h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+                      </svg>
+                      <p class="mt-4 text-sm font-medium text-gray-400">
+                        Before/after photos coming soon for this service.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p class="text-center text-sm text-gray-400">No services listed yet. Check back soon.</p>
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const sliders = document.querySelectorAll<HTMLElement>("[data-slider]");
+
+  sliders.forEach((slider) => {
+    const container = slider.querySelector<HTMLElement>("[class*='aspect-']");
+    const beforeClip = slider.querySelector<HTMLElement>("[class*='before-clip']");
+    const handle = slider.querySelector<HTMLElement>("[class*='slider-handle']");
+    const button = handle?.querySelector("button");
+    if (!container || !beforeClip || !handle || !button) return;
+
+    let isDragging = false;
+
+    function setPosition(x: number) {
+      const rect = container!.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+      beforeClip!.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      handle!.style.left = `calc(${pct}% - 24px)`;
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      isDragging = true;
+      button!.setPointerCapture(e.pointerId);
+      container!.style.cursor = "ew-resize";
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!isDragging) return;
+      e.preventDefault();
+      setPosition(e.clientX);
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+      container!.style.cursor = "";
+    }
+
+    button!.addEventListener("pointerdown", onPointerDown);
+    button!.addEventListener("pointermove", onPointerMove);
+    button!.addEventListener("pointerup", onPointerUp);
+    button!.addEventListener("pointercancel", onPointerUp);
+
+    container!.addEventListener("mousemove", (e) => {
+      if ((e.target as HTMLElement).closest("button")) return;
+      const rect = container!.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      handle!.style.left = `calc(${(x / rect.width) * 100}% - 24px)`;
+    });
+
+    container!.addEventListener("mouseleave", () => {
+      if (!isDragging) {
+        handle!.style.left = "calc(50% - 24px)";
+      }
+    });
+
+    container!.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("button")) return;
+      setPosition(e.clientX);
+    });
+  });
+</script>

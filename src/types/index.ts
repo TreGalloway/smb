@@ -31,6 +31,11 @@ export interface BeforeAfter {
   _id: string;
   _type: "beforeAfter";
   title: string;
+  service?: {
+    _id: string;
+    title: string;
+    slug: string;
+  };
   beforeImage?: SanityImage;
   afterImage?: SanityImage;
   description?: string;

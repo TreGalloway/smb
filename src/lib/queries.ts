@@ -38,6 +38,7 @@ export const BEFORE_AFTER_QUERY = defineQuery(`
     _id,
     title,
     description,
+    service-> { _id, title, "slug": slug.current },
     beforeImage {
       asset->{ _id, url, metadata { lqip, dimensions { width, height } } },
       alt,

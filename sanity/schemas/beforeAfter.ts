@@ -12,6 +12,13 @@ export const beforeAfter = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "service",
+      title: "Service",
+      type: "reference",
+      to: [{ type: "service" }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "beforeImage",
       title: "Before Image",
       type: "image",
