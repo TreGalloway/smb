@@ -1,12 +1,7 @@
 {
   "build": {
-    "builder": "NIXPACKS",
+    "builder": "RAILPACK",
     "buildCommand": "pnpm install && pnpm build",
     "watchPatterns": ["src/**", "public/**"]
-  },
-  "deploy": {
-    "static": true,
-    "staticDir": "dist",
-    "healthcheckPath": "/"
   }
 }
