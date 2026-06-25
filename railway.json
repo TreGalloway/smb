@@ -3,5 +3,10 @@
     "builder": "RAILPACK",
     "buildCommand": "pnpm install && pnpm build",
     "watchPatterns": ["src/**", "public/**"]
+  },
+  "deploy": {
+    "env": {
+      "RAILPACK_SPA_OUTPUT_DIR": "dist"
+    }
   }
 }
