@@ -42,6 +42,14 @@ export interface BeforeAfter {
   description?: string;
 }
 
+export interface Review {
+  _id: string;
+  _type: "review";
+  name: string;
+  text: string;
+  order?: number;
+}
+
 export interface TeamMember {
   _id: string;
   _type: "teamMember";

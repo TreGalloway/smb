@@ -63,6 +63,15 @@ export const TEAM_MEMBERS_QUERY = defineQuery(`
   }
 `);
 
+export const REVIEWS_QUERY = defineQuery(`
+  *[_type == "review"] | order(order asc) {
+    _id,
+    name,
+    text,
+    order
+  }
+`);
+
 export const BEFORE_AFTER_QUERY = defineQuery(`
   *[_type == "beforeAfter"] {
     _id,

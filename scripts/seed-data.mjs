@@ -170,6 +170,24 @@ async function seed() {
   }
   console.log(`  ✓ ${baData.length} before/after entries created`);
 
+  // 5. Reviews
+  const reviewData = [
+    { name: "Sarah M.", text: "They painted our entire living room in one day and it looks amazing. Professional, clean, and fair priced.", order: 1 },
+    { name: "David L.", text: "Had a leaky pipe that three other plumbers couldn't fix. These guys found and repaired it in under two hours. Lifesavers.", order: 2 },
+    { name: "Maria G.", text: "Our backyard was a mess after construction. They hauled everything away in one trip. Fast and affordable.", order: 3 },
+    { name: "Tom K.", text: "Mounted our 75-inch TV with perfect cable concealment. Looks like a custom install. Highly recommend.", order: 4 },
+    { name: "Lisa R.", text: "Sheetrock repair after a water leak — you can't even tell there was damage. Flawless finish.", order: 5 },
+  ];
+
+  for (const r of reviewData) {
+    await client.createIfNotExists({
+      _id: `review-${r.order}`,
+      _type: "review",
+      ...r,
+    });
+  }
+  console.log(`  ✓ ${reviewData.length} reviews created`);
+
   console.log(`\n✓ Seed complete!`);
   console.log(`  Open http://localhost:4321/admin to view your content.\n`);
 }
