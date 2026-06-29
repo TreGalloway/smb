@@ -52,12 +52,16 @@ const { items } = Astro.props;
 
     function onPointerDown(e: PointerEvent) {
       isDragging = true;
-      button!.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      container!.setPointerCapture(e.pointerId);
       container!.style.cursor = "ew-resize";
     }
 
     function onPointerMove(e: PointerEvent) {
-      if (!isDragging) return;
+      if (!isDragging) {
+        setPosition(e.clientX);
+        return;
+      }
       e.preventDefault();
       setPosition(e.clientX);
     }
@@ -67,27 +71,16 @@ const { items } = Astro.props;
       container!.style.cursor = "";
     }
 
-    button!.addEventListener("pointerdown", onPointerDown);
-    button!.addEventListener("pointermove", onPointerMove);
-    button!.addEventListener("pointerup", onPointerUp);
-    button!.addEventListener("pointercancel", onPointerUp);
-
-    container!.addEventListener("mousemove", (e) => {
-      if ((e.target as HTMLElement).closest("button")) return;
-      const rect = container!.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      handle!.style.left = `calc(${(x / rect.width) * 100}% - 24px)`;
-    });
-
-    container!.addEventListener("mouseleave", () => {
+    function onPointerLeave() {
       if (!isDragging) {
         handle!.style.left = "calc(50% - 24px)";
       }
-    });
+    }
 
-    container!.addEventListener("click", (e) => {
-      if ((e.target as HTMLElement).closest("button")) return;
-      setPosition(e.clientX);
-    });
+    container.addEventListener("pointerdown", onPointerDown);
+    container.addEventListener("pointermove", onPointerMove);
+    container.addEventListener("pointerup", onPointerUp);
+    container.addEventListener("pointercancel", onPointerUp);
+    container.addEventListener("pointerleave", onPointerLeave);
   });
 </script>

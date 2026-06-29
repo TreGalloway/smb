@@ -60,18 +60,8 @@ const FIELDS = [
               type="text"
               required
               placeholder="Name"
-              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors"
-            />
-          </div>
-          <div>
-            <label for="phone" class="sr-only">Phone</label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              required
-              placeholder="Phone"
-              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors"
+              autocomplete="name"
+              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-4 text-base text-gray-900 placeholder-gray-400 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors"
             />
           </div>
           <div>
@@ -80,7 +70,7 @@ const FIELDS = [
               id="service"
               name="service"
               required
-              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors"
+              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-4 text-base text-gray-900 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors"
             >
               <option value="" disabled selected>What do you need?</option>
               {FIELDS.map((field) => (
@@ -95,12 +85,12 @@ const FIELDS = [
               name="message"
               rows={3}
               placeholder="Tell us a bit more (optional)"
-              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors resize-none"
+              class="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-4 text-base text-gray-900 placeholder-gray-400 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-colors resize-none"
             ></textarea>
           </div>
           <button
             type="submit"
-            class="w-full rounded-lg bg-royal-800 px-6 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-royal-700 focus:outline-none focus:ring-2 focus:ring-royal-800/50 transition-colors"
+            class="w-full rounded-lg bg-royal-800 px-6 py-4 text-base font-semibold text-white shadow-sm hover:bg-royal-700 focus:outline-none focus:ring-2 focus:ring-royal-800/50 transition-colors"
           >
             Request my free quote
           </button>
@@ -130,7 +120,7 @@ const FIELDS = [
       {companySettings?.phone && (
         <a
           href={`tel:${companySettings.phone.replace(/\s/g, "")}`}
-          class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10"
+          class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-4 text-sm font-bold text-white transition-colors hover:bg-white/10"
         >
           <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -140,7 +130,7 @@ const FIELDS = [
       )}
       <a
         href="#contact"
-        class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gold-500 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-gold-600"
+        class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gold-500 px-4 py-4 text-sm font-bold text-white transition-colors hover:bg-gold-600"
       >
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -149,11 +139,12 @@ const FIELDS = [
       </a>
     </div>
   </div>
+  <div id="sticky-bar-observer" class="absolute -top-32 left-0 h-1 w-full"></div>
 </section>
 
 <style is:global>
   body {
-    padding-bottom: 68px;
+    padding-bottom: 80px;
   }
 
   @media (min-width: 1024px) {
@@ -162,3 +153,17 @@ const FIELDS = [
     }
   }
 </style>
+
+<script>
+  const contactSection = document.getElementById("contact");
+  const stickyBar = document.querySelector<HTMLElement>('[class*="fixed bottom-0"]');
+  if (contactSection && stickyBar) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        stickyBar.style.display = entry.isIntersecting ? "none" : "flex";
+      },
+      { threshold: 0 },
+    );
+    observer.observe(contactSection);
+  }
+</script>
