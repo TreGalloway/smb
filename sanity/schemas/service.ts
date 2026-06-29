@@ -44,6 +44,24 @@ export const service = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "gallery",
+      title: "Photo Gallery",
+      type: "array",
+      of: [
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              type: "string",
+              title: "Alternative Text",
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: "sequenceNumber",
       title: "Sequence Number",
       type: "number",

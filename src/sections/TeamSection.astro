@@ -1,0 +1,51 @@
+---
+import type { TeamMember } from "../types";
+import { urlFor } from "../lib/sanity";
+
+export interface Props {
+  members: TeamMember[];
+}
+
+const { members } = Astro.props;
+---
+
+<section class="bg-white py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:text-center">
+      <p class="text-sm/6 font-semibold uppercase tracking-widest text-gold-500">Our team</p>
+      <h2 class="mt-3 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+        Meet the crew.
+      </h2>
+      <p class="mt-4 text-lg text-gray-500">
+        Skilled, licensed, and dedicated to doing the job right.
+      </p>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {members.map((member) => {
+        const photoUrl = member.photo
+          ? urlFor(member.photo).width(400).height(500).fit("crop").url()
+          : null;
+        return (
+          <div class="group flex flex-col items-center text-center">
+            {photoUrl && (
+              <div class="aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-100 shadow-md">
+                <img
+                  src={photoUrl}
+                  alt={member.photo?.alt ?? member.name}
+                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <h3 class="mt-5 text-xl font-bold text-gray-900">{member.name}</h3>
+            <p class="mt-1 text-sm font-medium text-gold-500">{member.role}</p>
+            {member.bio && (
+              <p class="mt-3 max-w-xs text-sm leading-relaxed text-gray-500">{member.bio}</p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>

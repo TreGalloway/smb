@@ -1,13 +1,14 @@
 ---
-import type { Service, BeforeAfter, CompanySettings } from "../types";
+import type { Service, BeforeAfter, CompanySettings, TeamMember } from "../types";
 import { sanityClient } from "sanity:client";
-import { COMPANY_SETTINGS_QUERY, SERVICES_QUERY, BEFORE_AFTER_QUERY } from "../lib/queries";
+import { COMPANY_SETTINGS_QUERY, SERVICES_QUERY, BEFORE_AFTER_QUERY, TEAM_MEMBERS_QUERY } from "../lib/queries";
 import Layout from "../layouts/Layout.astro";
 import HeroSection from "../sections/HeroSection.astro";
 import PromiseGrid from "../sections/PromiseGrid.astro";
 import ServiceList from "../components/ServiceList.astro";
 import ProcessSteps from "../sections/ProcessSteps.astro";
 import WorkSlider from "../components/WorkSlider.astro";
+import TeamSection from "../sections/TeamSection.astro";
 import ServiceArea from "../sections/ServiceArea.astro";
 import FAQSection from "../sections/FAQSection.astro";
 import CTABanner from "../sections/CTABanner.astro";
@@ -15,11 +16,13 @@ import CTABanner from "../sections/CTABanner.astro";
 let companySettings: CompanySettings | null = null;
 let services: Service[] = [];
 let beforeAfterItems: BeforeAfter[] = [];
+let teamMembers: TeamMember[] = [];
 
 try {
   companySettings = await sanityClient.fetch(COMPANY_SETTINGS_QUERY);
   services = await sanityClient.fetch(SERVICES_QUERY);
   beforeAfterItems = await sanityClient.fetch(BEFORE_AFTER_QUERY);
+  teamMembers = await sanityClient.fetch(TEAM_MEMBERS_QUERY);
 } catch (e) {
   console.warn("Sanity fetch failed — is your project configured?", (e as Error).message);
 }
@@ -33,6 +36,7 @@ try {
   <HeroSection
     businessName={companySettings?.businessName}
     phone={companySettings?.phone}
+    heroBackground={companySettings?.heroBackground}
   />
 
   <PromiseGrid />
@@ -49,6 +53,8 @@ try {
   />
 
   <FAQSection />
+
+  {teamMembers.length > 0 && <TeamSection members={teamMembers} />}
 
   <CTABanner phone={companySettings?.phone} />
 </Layout>

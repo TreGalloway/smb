@@ -48,6 +48,26 @@ export const companySettings = defineType({
       title: "Company Logo",
       type: "image",
       options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative Text",
+        }),
+      ],
+    }),
+    defineField({
+      name: "heroBackground",
+      title: "Hero Background Image",
+      type: "image",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative Text",
+        }),
+      ],
     }),
   ],
   preview: {

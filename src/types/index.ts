@@ -23,6 +23,7 @@ export interface Service {
   slug: string;
   description?: string;
   mainImage?: SanityImage;
+  gallery?: SanityImage[];
   bulletPoints?: string[];
   sequenceNumber: number;
 }
@@ -41,6 +42,16 @@ export interface BeforeAfter {
   description?: string;
 }
 
+export interface TeamMember {
+  _id: string;
+  _type: "teamMember";
+  name: string;
+  role: string;
+  photo?: SanityImage;
+  bio?: string;
+  order?: number;
+}
+
 export interface CompanySettings {
   _id: string;
   _type: "companySettings";
@@ -51,4 +62,5 @@ export interface CompanySettings {
   serviceAreas?: string[];
   licenseNumbers?: string[];
   logo?: SanityImage;
+  heroBackground?: SanityImage;
 }

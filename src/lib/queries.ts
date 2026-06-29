@@ -10,8 +10,16 @@ export const COMPANY_SETTINGS_QUERY = defineQuery(`
     serviceAreas,
     licenseNumbers,
     logo {
-      asset->{ _id, url },
-      alt
+      asset->{ _id, url, metadata { lqip, dimensions { width, height } } },
+      alt,
+      hotspot,
+      crop
+    },
+    heroBackground {
+      asset->{ _id, url, metadata { lqip, dimensions { width, height } } },
+      alt,
+      hotspot,
+      crop
     }
   }
 `);
@@ -28,8 +36,30 @@ export const SERVICES_QUERY = defineQuery(`
       hotspot,
       crop
     },
+    gallery[] {
+      asset->{ _id, url, metadata { lqip, dimensions { width, height } } },
+      alt,
+      hotspot,
+      crop
+    },
     bulletPoints,
     sequenceNumber
+  }
+`);
+
+export const TEAM_MEMBERS_QUERY = defineQuery(`
+  *[_type == "teamMember"] | order(order asc) {
+    _id,
+    name,
+    role,
+    photo {
+      asset->{ _id, url, metadata { lqip, dimensions { width, height } } },
+      alt,
+      hotspot,
+      crop
+    },
+    bio,
+    order
   }
 `);
 

@@ -130,7 +130,23 @@ async function seed() {
   }
   console.log(`  ✓ ${serviceData.length} services created`);
 
-  // 3. Before & After Entries
+  // 3. Team Members
+  const teamData = [
+    { name: "Alex Reyes", role: "Owner & Lead Technician", bio: "20+ years in home services. Licensed, bonded, and committed to quality.", order: 1 },
+    { name: "Jordan Chen", role: "Project Manager", bio: "Keeps every job on schedule and on budget.", order: 2 },
+    { name: "Marcus Webb", role: "Senior Technician", bio: "Specializes in carpentry, drywall, and finish work.", order: 3 },
+  ];
+
+  for (const member of teamData) {
+    await client.createIfNotExists({
+      _id: `teamMember-${member.order}`,
+      _type: "teamMember",
+      ...member,
+    });
+  }
+  console.log(`  ✓ ${teamData.length} team members created`);
+
+  // 4. Before & After Entries
   const baData = [
     { title: "Living room refresh", description: "Full interior repaint with accent wall.", serviceRef: "service-1" },
     { title: "Driveway restoration", description: "Heavy-duty pressure washing on concrete driveway.", serviceRef: "service-2" },
